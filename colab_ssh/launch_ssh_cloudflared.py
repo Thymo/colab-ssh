@@ -18,7 +18,9 @@ def launch_ssh_cloudflared(
                password="",
                verbose=False,
                prevent_interrupt=False,
-               kill_other_processes=True):
+               kill_other_processes=True,
+               config=None
+):
     # Kill any cloudflared process if running
     if kill_other_processes:
         os.system("kill -9 $(ps aux | grep 'cloudflared' | awk '{print $2}')")
@@ -63,6 +65,10 @@ def launch_ssh_cloudflared(
 
     # Prepare the cloudflared command
     popen_command = f'./cloudflared tunnel --url ssh://localhost:22 --logfile ./cloudflared.log --metrics localhost:45678 {" ".join(extra_params)}'
+    
+    if config:
+      popen_command = f'./cloudflared tunnel --config {config} --logfile ./cloudflared.log --metrics localhost:45678 {" ".join(extra_params)} run'
+    
     preexec_fn = None
     if prevent_interrupt:
         popen_command = 'nohup ' + popen_command
