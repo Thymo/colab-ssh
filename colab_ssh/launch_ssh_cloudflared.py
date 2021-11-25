@@ -85,7 +85,14 @@ def launch_ssh_cloudflared(
             print(f"DEBUG: Cloudflared process: PID={proc.pid}")
         time.sleep(sleep_time)
         try:
-            info = get_argo_tunnel_config()
+            if config:
+                info = {
+                    "domain": "",
+                    "protocol": "",
+                    "port": 22
+                }
+            else:
+                info = get_argo_tunnel_config()
             break
         except Exception as e:
             os.kill(proc.pid, signal.SIGKILL)
